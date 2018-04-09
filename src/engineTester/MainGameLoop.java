@@ -29,7 +29,9 @@ public class MainGameLoop {
     RawModel lowpolyTreeModel = OBJLoader.loadObjModel("lowPolyTree", loader);
     RawModel grassModel = OBJLoader.loadObjModel("grassModel", loader);
     RawModel fernModel = OBJLoader.loadObjModel("fern", loader);
+    RawModel bunnyModel = OBJLoader.loadObjModel("bunny", loader);
 
+    TexturedModel bunny = new TexturedModel(bunnyModel, new ModelTexture(loader.loadTexture("white")));
     TexturedModel tree = new TexturedModel(treeModel, new ModelTexture(loader.loadTexture("tree")));
     TexturedModel lowpolyTree = new TexturedModel(lowpolyTreeModel, new ModelTexture(loader.loadTexture("lowPolyTree")));
     TexturedModel grass = new TexturedModel(grassModel, new ModelTexture(loader.loadTexture("grassTexture")));
@@ -42,6 +44,7 @@ public class MainGameLoop {
     List<Entity> entities = new ArrayList<Entity>();
     Random random = new Random();
     for(int i=0;i<500;i++){
+      //entities.add(new Entity(bunny, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,0.1f));
       entities.add(new Entity(tree, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,3));
       entities.add(new Entity(lowpolyTree, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,0.3f));
       entities.add(new Entity(grass, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
