@@ -4,9 +4,12 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import guis.GuiRenderer;
+import guis.GuiTexture;
 import models.TexturedModel;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import renderEngine.*;
 import models.RawModel;
@@ -43,14 +46,17 @@ public class MainGameLoop {
     TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("tree", loader), new ModelTexture(loader.loadTexture("tree")));
     TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
     TexturedModel flower = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
-    TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
     TexturedModel bobble = new TexturedModel(OBJLoader.loadObjModel("lowPolyTree", loader), new ModelTexture(loader.loadTexture("lowPolyTree")));
+
+    TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
+
 
     grass.getTexture().setHasTransparency(true);
     grass.getTexture().setUseFakeLighting(true);
     flower.getTexture().setHasTransparency(true);
     flower.getTexture().setUseFakeLighting(true);
     fern.getTexture().setHasTransparency(true);
+    fern.getTexture().setNumberOfRows(2);
 
     Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
 
@@ -76,7 +82,7 @@ public class MainGameLoop {
 
       if (i % 3 == 0) {
 
-        float treeX = random.nextFloat()*800 - 400;
+        float treeX = random.nextFloat()* 800 - 400;
         float treeZ = random.nextFloat() * - 600;
         float treeY = terrain.getHeightOfTerrain(treeX, treeZ);
 
@@ -92,7 +98,7 @@ public class MainGameLoop {
         float fernZ = random.nextFloat() * - 400;
         float fernY = terrain.getHeightOfTerrain(fernX, fernZ);
 
-        entities.add(new Entity(fern, new Vector3f(fernX, fernY, fernZ), 0, random.nextFloat() * 360,0,0.9f));
+        entities.add(new Entity(fern, random.nextInt(4), new Vector3f(fernX, fernY, fernZ), 0, random.nextFloat() * 360,0,0.9f));
       }
     }
 
@@ -106,6 +112,12 @@ public class MainGameLoop {
 
     Camera camera = new Camera(player);
 
+    List<GuiTexture> guis = new ArrayList<>();
+    GuiTexture gui = new GuiTexture(loader.loadTexture("health"), new Vector2f(-0.7f, 0.85f), new Vector2f(0.25f, 0.25f));
+    guis.add(gui);
+
+    GuiRenderer guiRenderer = new GuiRenderer(loader);
+
     while(!Display.isCloseRequested()){
       camera.move();
       player.move(terrain);
@@ -115,9 +127,11 @@ public class MainGameLoop {
         renderer.processEntity(entity);
       }
       renderer.render(light, camera);
+      guiRenderer.render(guis);
       DisplayManager.updateDisplay();
     }
 
+    guiRenderer.cleanUp();
     renderer.cleanUp();
     loader.cleanUp();
     DisplayManager.closeDisplay();
