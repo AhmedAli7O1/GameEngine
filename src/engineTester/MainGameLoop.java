@@ -12,6 +12,8 @@ import models.RawModel;
 import shaders.StaticShader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,37 +26,64 @@ public class MainGameLoop {
     DisplayManager.createDisplay();
     Loader loader = new Loader();
 
+    //****************** Terrain Texture ********************
 
-    RawModel treeModel = OBJLoader.loadObjModel("tree", loader);
-    RawModel lowpolyTreeModel = OBJLoader.loadObjModel("lowPolyTree", loader);
-    RawModel grassModel = OBJLoader.loadObjModel("grassModel", loader);
-    RawModel fernModel = OBJLoader.loadObjModel("fern", loader);
-    RawModel bunnyModel = OBJLoader.loadObjModel("bunny", loader);
+    TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
+    TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
+    TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
+    TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
 
-    TexturedModel bunny = new TexturedModel(bunnyModel, new ModelTexture(loader.loadTexture("white")));
-    TexturedModel tree = new TexturedModel(treeModel, new ModelTexture(loader.loadTexture("tree")));
-    TexturedModel lowpolyTree = new TexturedModel(lowpolyTreeModel, new ModelTexture(loader.loadTexture("lowPolyTree")));
-    TexturedModel grass = new TexturedModel(grassModel, new ModelTexture(loader.loadTexture("grassTexture")));
+    TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+    TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+
+    //*******************************************************
+
+
+    TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("tree", loader), new ModelTexture(loader.loadTexture("tree")));
+    TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
+    TexturedModel flower = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
+    TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
+    TexturedModel bobble = new TexturedModel(OBJLoader.loadObjModel("lowPolyTree", loader), new ModelTexture(loader.loadTexture("lowPolyTree")));
+
     grass.getTexture().setHasTransparency(true);
     grass.getTexture().setUseFakeLighting(true);
-    TexturedModel fern = new TexturedModel(fernModel, new ModelTexture(loader.loadTexture("fern")));
+    flower.getTexture().setHasTransparency(true);
+    flower.getTexture().setUseFakeLighting(true);
     fern.getTexture().setHasTransparency(true);
-    fern.getTexture().setUseFakeLighting(true);
 
     List<Entity> entities = new ArrayList<Entity>();
-    Random random = new Random();
-    for(int i=0;i<500;i++){
-      //entities.add(new Entity(bunny, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,0.1f));
-      entities.add(new Entity(tree, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,3));
-      entities.add(new Entity(lowpolyTree, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,0.3f));
-      entities.add(new Entity(grass, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
-      entities.add(new Entity(fern, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,0.6f));
+    Random random = new Random(676452);
+
+    for(int i = 0; i < 400; i++){
+      if (i % 7 == 0) {
+        entities.add(new Entity(grass,
+            new Vector3f(random.nextFloat() * 400 - 200,0,random.nextFloat() * -400),
+            0,0,0,1.8f));
+
+        entities.add(new Entity(flower,
+            new Vector3f(random.nextFloat() * 400 - 200,0,random.nextFloat() * -400),
+            0,0,0,2.3f));
+      }
+
+      if (i % 3 == 0) {
+        entities.add(new Entity(tree,
+            new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),
+            0,0,0,random.nextFloat() * 1 + 4));
+
+        entities.add(new Entity(bobble,
+            new Vector3f(random.nextFloat() * 800 - 400,0,random.nextFloat() * -600),
+            0,random.nextFloat() * 360,0, random.nextFloat() * 0.1f + 0.6f));
+
+        entities.add(new Entity(fern,
+            new Vector3f(random.nextFloat() * 400 - 200,0,random.nextFloat() * -400),
+            0, random.nextFloat() * 360,0,0.9f));
+      }
     }
 
-    Light light = new Light(new Vector3f(3000,2000,2000),new Vector3f(1,1,1));
+    Light light = new Light(new Vector3f(20000,40000,20000),new Vector3f(1,1,1));
 
-    Terrain terrain = new Terrain(0,0,loader,new ModelTexture(loader.loadTexture("grass")));
-    Terrain terrain2 = new Terrain(1,0,loader,new ModelTexture(loader.loadTexture("grass")));
+    Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap);
+    Terrain terrain2 = new Terrain(-1, -1, loader, texturePack, blendMap);
 
     Camera camera = new Camera();
     MasterRenderer renderer = new MasterRenderer();

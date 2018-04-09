@@ -3,6 +3,8 @@ package terrains;
 import models.RawModel;
 import renderEngine.Loader;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
 public class Terrain {
 
@@ -12,10 +14,12 @@ public class Terrain {
   private float x;
   private float z;
   private RawModel model;
-  private ModelTexture texture;
+  private TerrainTexturePack texturePack;
+  private TerrainTexture blendMap;
 
-  public Terrain (int gridX, int gridZ, Loader loader, ModelTexture texture) {
-    this.texture = texture;
+  public Terrain (int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap) {
+    this.texturePack = texturePack;
+    this.blendMap = blendMap;
     this.x = gridX * SIZE;
     this.z = gridZ * SIZE;
     this.model = generateTerrain(loader);
@@ -30,9 +34,9 @@ public class Terrain {
     int vertexPointer = 0;
     for(int i=0;i<VERTEX_COUNT;i++){
       for(int j=0;j<VERTEX_COUNT;j++){
-        vertices[vertexPointer*3] = - (SIZE / 2) + (float)j/((float)VERTEX_COUNT - 1) * SIZE;
+        vertices[vertexPointer*3] = (float)j/((float)VERTEX_COUNT - 1) * SIZE;
         vertices[vertexPointer*3+1] = 0;
-        vertices[vertexPointer*3+2] = - (SIZE / 2) + (float)i/((float)VERTEX_COUNT - 1) * SIZE;
+        vertices[vertexPointer*3+2] = (float)i/((float)VERTEX_COUNT - 1) * SIZE;
         normals[vertexPointer*3] = 0;
         normals[vertexPointer*3+1] = 1;
         normals[vertexPointer*3+2] = 0;
@@ -71,7 +75,11 @@ public class Terrain {
     return model;
   }
 
-  public ModelTexture getTexture() {
-    return texture;
+  public TerrainTexturePack getTexturePack() {
+    return texturePack;
+  }
+
+  public TerrainTexture getBlendMap() {
+    return blendMap;
   }
 }
