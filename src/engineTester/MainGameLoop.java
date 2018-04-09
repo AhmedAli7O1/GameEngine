@@ -3,6 +3,7 @@ package engineTester;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
 import models.TexturedModel;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -88,9 +89,14 @@ public class MainGameLoop {
     Camera camera = new Camera();
     MasterRenderer renderer = new MasterRenderer();
 
+    TexturedModel bunny = new TexturedModel(OBJLoader.loadObjModel("person", loader), new ModelTexture(loader.loadTexture("playerTexture")));
+
+    Player player = new Player(bunny, new Vector3f(100, 0, -50), 0, 0, 0, 1);
+
     while(!Display.isCloseRequested()){
       camera.move();
-
+      player.move();
+      renderer.processEntity(player);
       renderer.processTerrain(terrain);
       renderer.processTerrain(terrain2);
       for(Entity entity:entities){
