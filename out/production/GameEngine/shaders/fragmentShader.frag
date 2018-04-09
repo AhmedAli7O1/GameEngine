@@ -1,13 +1,13 @@
 #version 400 core
 
-in vec2 pass_textureCoords;
+in vec2 pass_textureCoordinates;
 in vec3 surfaceNormal;
 in vec3 toLightVector;
 in vec3 toCameraVector;
 
 out vec4 out_Colour;
 
-uniform sampler2D textureSampler;
+uniform sampler2D modelTexture;
 uniform vec3 lightColour;
 uniform float shineDamper;
 uniform float reflectivity;
@@ -31,5 +31,11 @@ void main (void) {
   float dampedFactor = pow(specularFactor, shineDamper);
   vec3 finalSpecular = dampedFactor * reflectivity * lightColour;
 
-  out_Colour = vec4(diffuse, 1.0) * texture(textureSampler, pass_textureCoords) + vec4(finalSpecular, 1.0);
+  vec4 textureColour = texture(modelTexture, pass_textureCoordinates);
+
+  if (textureColour.a < 0.5) {
+    discard;
+  }
+
+  out_Colour = vec4(diffuse, 1.0) * textureColour + vec4(finalSpecular, 1.0);
 }

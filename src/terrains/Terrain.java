@@ -25,7 +25,7 @@ public class Terrain {
     int count = VERTEX_COUNT * VERTEX_COUNT;
     float[] vertices = new float[count * 3];
     float[] normals = new float[count * 3];
-    float[] textureCoords = new float[count*2];
+    float[] textureCoordinates = new float[count*2];
     int[] indices = new int[6*(VERTEX_COUNT-1)*(VERTEX_COUNT-1)];
     int vertexPointer = 0;
     for(int i=0;i<VERTEX_COUNT;i++){
@@ -36,8 +36,8 @@ public class Terrain {
         normals[vertexPointer*3] = 0;
         normals[vertexPointer*3+1] = 1;
         normals[vertexPointer*3+2] = 0;
-        textureCoords[vertexPointer*2] = (float)j/((float)VERTEX_COUNT - 1);
-        textureCoords[vertexPointer*2+1] = (float)i/((float)VERTEX_COUNT - 1);
+        textureCoordinates[vertexPointer*2] = (float)j/((float)VERTEX_COUNT - 1);
+        textureCoordinates[vertexPointer*2+1] = (float)i/((float)VERTEX_COUNT - 1);
         vertexPointer++;
       }
     }
@@ -56,7 +56,7 @@ public class Terrain {
         indices[pointer++] = bottomRight;
       }
     }
-    return loader.loadToVAO(vertices, textureCoords, normals, indices);
+    return loader.loadToVAO(vertices, textureCoordinates, normals, indices);
   }
 
   public float getX() {
