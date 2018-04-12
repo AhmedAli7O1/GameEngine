@@ -90,6 +90,7 @@ public class Terrain {
   }
 
   public float getHeightOfTerrain (float worldX, float worldZ) {
+
     float terrainX = worldX - this.x;
     float terrainZ = worldZ - this.z;
     float gridSquareSize = SIZE / ((float) heights.length - 1);
